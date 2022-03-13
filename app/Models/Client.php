@@ -19,6 +19,7 @@ class Client extends Model
         'surname',
         'address',
         'telephoneNumber',
+        'company_id'
     ];
     public function company(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {

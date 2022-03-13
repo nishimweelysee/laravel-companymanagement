@@ -2,21 +2,14 @@
 
 @section('content')
     <div>
-        <form method="post" class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 flex flex-col gap-4 m-4" action="{{ route('company') }}" enctype="multipart/form-data">
-            @csrf
-            <div class="mb-3">
-                <label for="id" class="block text-gray-700 text-sm font-bold mb-2">{{ __('Id') }}</label>
-
-                <div class="">
-                    <input id="id" type="text" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline @error('id') is-invalid @enderror" name="id" value="{{ $company->id  }}" required autocomplete="id" autofocus>
-
-                    @error('id')
-                    <span class="invalid-feedback" role="alert">
-                        <strong>{{ $message }}</strong>
-                    </span>
-                    @enderror
-                </div>
+        <div class="flex justify-center underline m-2">
+            <div class="p-4">
+                <h3 class="text-center font-bold">Company registration</h3>
             </div>
+        </div>
+        <form method="post" class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 flex flex-col gap-4 m-4" action="{{ route('company.update',['company'=> $company->id]) }}" enctype="multipart/form-data">
+            @method("PUT")
+            @csrf
             <div class="mb-3">
                 <label for="name" class="block text-gray-700 text-sm font-bold mb-2">{{ __('Name') }}</label>
 
@@ -100,8 +93,6 @@
                     @enderror
                 </div>
             </div>
-
-
 
             <div class="mb-0">
                 <div class="flex flex-col">

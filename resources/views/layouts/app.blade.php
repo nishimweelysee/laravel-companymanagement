@@ -41,7 +41,7 @@
 
         <div class="hidden lg:flex lg:items-center lg:w-auto w-full" id="menu">
             <nav>
-                <ul class="lg:flex flex-col items-center justify-between text-base text-white pt-4 lg:pt-0">
+                <ul class="flex flex-row items-center justify-between text-base text-white pt-4 lg:pt-0">
                     @guest
                         @if (Route::has('login'))
                             <li>
@@ -57,7 +57,7 @@
                     @else
                         <li class="flex lg:flex-row flex-col gap-4">
 
-                            <a class="lg:p-4 py-3 px-0 block border-b-2 border-transparent hover:border-indigo-400" href="{{ route('company') }}">
+                            <a class="lg:p-4 py-3 px-0 block border-b-2 border-transparent hover:border-indigo-400" href="{{ route('company.index') }}">
                                 {{ __('Company') }}
                             </a>
                             <a class="lg:p-4 py-3 px-0 block border-b-2 border-transparent hover:border-indigo-400" href="{{ route('employee.index') }}">
@@ -96,6 +96,11 @@
     <main class="py-4 px-6">
         @yield('content')
     </main>
+    <footer>
+        <div class="flex justify-center p-3 mb-0">
+            <span class="text-center">Zatec Rwanda &copy; 2022</span>
+        </div>
+    </footer>
 </div>
 </body>
 </html>

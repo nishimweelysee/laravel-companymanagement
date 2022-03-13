@@ -72,24 +72,22 @@
                                         <div class="text-sm text-gray-900">{{$company->telephonenumber}}</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-gray-900">{{$company->website}}</div>
+                                        <a href="https://{{$company->website}}" target="_blank" class="text-sm">{{$company->website}}</a>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="text-sm text-gray-900">{{$company->director}}</div>
                                     </td>
-                                    <td class="px-6 py-4 text-center whitespace-nowrap text-sm font-medium">
-                                        <a href="/client/create/{{$company->id}}" class="text-gray-600 hover:text-gray-900">
-                                            <i class="fas fa-user-plus"></i>
-                                        </a>
-                                        <a href="/employee/create/{{$company->id}}" class="text-green-600 hover:text-green-900">
-                                            <i class="fas fa-user-tie"></i>
-                                        </a>
-                                        <a href="/company/edit/{{$company->id}}" class="text-indigo-600 hover:text-indigo-900">
+                                    <td class="px-6 py-4 text-center flex justify-center gap-2 whitespace-nowrap text-sm font-medium">
+                                        <a href="{{ route('company.edit',['company' => $company]) }}" class="text-indigo-600 hover:text-indigo-900">
                                             <i class="fas fa-edit"></i>
                                         </a>
-                                        <a href="/company/delete/{{$company->id}}" class="text-red-600 hover:text-red-900">
-                                            <i class="fas fa-trash-alt"></i>
-                                        </a>
+                                        <form method="POST" action="{{ route('company.destroy',['company' => $company]) }}">
+                                            @method("DELETE")
+                                            @csrf
+                                            <button type="submit" class="text-red-600 hover:text-red-900">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </button>
+                                        </form>
                                     </td>
                                 </tr>
                             @endforeach

@@ -5,80 +5,128 @@ namespace App\Http\Controllers;
 use App\Models\Company;
 use App\Models\Employee;
 use Illuminate\Http\Request;
+use \Illuminate\Support\Facades\Mail;
+use \App\Mail\SendEmail;
 
 class EmployeeController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
     public function __construct()
     {
         $this->middleware('auth');
     }
-
     /**
-     * Show the application dashboard.
+     * Display a listing of the resource.
      *
-     * @return \Illuminate\Contracts\Support\Renderable
+     * @return \Illuminate\Http\Response
      */
     public function index()
     {
-        return view('employee.employee',["employees"=>Employee::paginate(10)]);
-    }
-    public function create($id){
-        return view('employee.create',["company"=>Company::find($id)]);
-    }
-    public function edit($id){
-        $employee = Employee::find($id);
-        return view('employee.edit',['employee'=>$employee]);
+        return view('employee.employee',["employees"=>Employee::paginate(10), "companies" => Company::all()]);
     }
 
-    public function delete($id){
-        Employee::destroy($id);
-        return redirect('/employee');
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
+        return view('employee.create',["companies"=>Company::paginate(10)]);
     }
 
-    public function store($id){
-        $data = \request()->validate([
-            'id'=>'',
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request)
+    {
+        $data = $request->validate([
             'name'=>'required',
             'surname'=>'required',
             'employeeNumber'=>'required',
             'email'=>['email','required'],
             'telephoneNumber'=>['required'],
-            'startDate'=>['date','required']
+            'startDate'=>['date','required'],
+            'company'=>'required'
         ]);
-
-        if (array_key_exists('id',$data) && $data['id']){
-            $emp = Employee::find($data['id']);
-            $emp->update($data);
-        }else{
-
-            $comp = Company::find($id);
-
-            $comp->employee()->create([
-                'name'=>$data['name'],
-                'surname'=>$data['surname'],
-                'employeeNumber'=>$data['employeeNumber'],
-                'email'=>$data['email'],
-                'telephoneNumber'=>$data['telephoneNumber'],
-                'startDate'=>$data['startDate']
-            ]);
-
-            $user = auth()->user();
-            $email = $user->email;
-            $name = $user->name;
-            $employeeName = $data['name'].'  '.$data['surname'];
-            $details = [
-                'title' => 'User creation Confirmation',
-                'body' => "Hello $name, \n You have Created Employee called  $employeeName"
-            ];
-
-            \Illuminate\Support\Facades\Mail::to($email)->send(new \App\Mail\SendEmail($details));
-        }
-
+        $comp = Company::find($data['company']);
+        $comp->employee()->create($data);
+        $user = auth()->user();
+        $email = $user->email;
+        $name = $user->name;
+        $employeeName = $data['name'].'  '.$data['surname'];
+        $details = [
+            'title' => 'User creation Confirmation',
+            'body' => "Hello $name, \n You have Created Employee called  $employeeName"
+        ];
+        Mail::to($email)->send(new SendEmail($details));
         return redirect('/employee');
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show($id)
+    {
+        //
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function edit($id)
+    {
+        $employee = Employee::find($id);
+        return view('employee.edit',['employee'=>$employee,"companies"=>Company::paginate(10)]);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, $id)
+    {
+        $data = $request->validate([
+            'name'=>'required',
+            'surname'=>'required',
+            'employeeNumber'=>'required',
+            'email'=>['email','required'],
+            'telephoneNumber'=>['required'],
+            'startDate'=>['date','required'],
+            'company_id'=>'required'
+        ]);
+        $employee = Employee::find($id);
+        $employee->update($data);
+        return redirect('/employee');
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy($id)
+    {
+        Employee::destroy($id);
+        return redirect('/employee');
+    }
+
+    public function filterEmployee()
+    {
+        $query = Request::capture()->query->all();
+        $employees = (collect($query)->shift())?Employee::where($query)->paginate(10):Employee::paginate(10);
+        return view('employee.employee', ["employees" => $employees, "companies" => Company::all()]);
     }
 }

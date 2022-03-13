@@ -3,8 +3,34 @@
 @section('content')
     <div>
         <div class="flex flex-col">
-            <div class="p-4">
-                <h3 class="text-center font-bold">List of all Clients</h3>
+            <div class="flex justify-between m-2">
+                <div class="p-4">
+                    <h3 class="text-center font-bold">List of all Clients</h3>
+                </div>
+                <div>
+                    <a href=" {{ route('client.create') }} " class="fas fa-plus-o bg-gray-800 hover:bg-green-600 text-white p-2">Add New</a>
+                </div>
+            </div>
+            <div class="flex justify-between m-2">
+                <div>
+                    <form method="get" action="{{ route('client.filterClient') }}">
+                        <div class="container flex justify-center items-center">
+                            <div class="relative">
+                                <div class="absolute top-4 left-3"> <i class="fa fa-search text-gray-400 z-20 hover:text-gray-500"></i> </div> <input type="text" class="h-14 w-96 pl-10 pr-20 rounded-lg z-0 focus:shadow focus:outline-none" name="name" placeholder="Search anything...">
+                                <div class="absolute top-2 right-2"> <button class="h-10 w-20 text-white rounded-lg bg-gray-800 hover:bg-green-600">Search</button> </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <form method="get" action="{{ route('client.filterClient') }}">
+                    <select id="company" onchange="this.form.submit()" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline @error('company') is-invalid @enderror" name="company_id" value="{{ old('company') }}" required autocomplete="company" >
+                        <option selected disabled>Select Company</option>
+                        @foreach($companies as $c)
+                            <option value=" {{ $c->id }}">{{ $c->name }}</option>
+                        @endforeach
+                        <option value="">All</option>
+                    </select>
+                </form>
             </div>
             <div class="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                 <div class="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
@@ -42,6 +68,18 @@
                                 >
                                     Phone Number
                                 </th>
+                                <th
+                                    scope="col"
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                >
+                                    Company
+                                </th>
+                                <th
+                                    scope="col"
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                >
+                                    Registered Date
+                                </th>
                                 <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     <span>Action</span>
                                 </th>
@@ -65,13 +103,23 @@
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="text-sm text-gray-900">{{$client->telephoneNumber}}</div>
                                     </td>
-                                    <td class="px-6 py-4 text-center whitespace-nowrap  text-sm font-medium">
-                                        <a href="/client/edit/{{$client->id}}" class="text-indigo-600 hover:text-indigo-900">
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">{{$client->company->name}}</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">{{$client->created_at}}</div>
+                                    </td>
+                                    <td class="px-6 py-4 text-center flex justify-center gap-2 whitespace-nowrap  text-sm font-medium">
+                                        <a href=" {{ route('client.edit', ['client'=>$client]) }}" class="text-indigo-600 hover:text-indigo-900">
                                             <i class="fas fa-edit"></i>
                                         </a>
-                                        <a href="/client/delete/{{$client->id}}" class="text-red-600 hover:text-red-900">
-                                            <i class="fas fa-trash-alt"></i>
-                                        </a>
+                                        <form method="post" action=" {{ route('client.destroy', ['client'=>$client]) }} ">
+                                            @method("DELETE")
+                                            @csrf
+                                            <button type="submit" class="text-red-600 hover:text-red-900">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </button>
+                                        </form>
                                     </td>
                                 </tr>
                             @endforeach

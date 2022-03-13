@@ -2,7 +2,12 @@
 
 @section('content')
     <div>
-        <form method="post" class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 flex flex-col gap-4 m-4" action="{{ route('company') }}" enctype="multipart/form-data">
+        <div class="flex justify-center underline m-2">
+            <div class="p-4">
+                <h3 class="text-center font-bold">Company registration</h3>
+            </div>
+        </div>
+        <form method="post" class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 flex flex-col gap-4 m-4" action="{{ route('company.store') }}" enctype="multipart/form-data">
             @csrf
 
             <div class="mb-3">
